@@ -1,0 +1,21 @@
+{
+  "name": "node-e2e-testing",
+  "version": "0.0.1",
+  "description": "MultiProject Integration Tests",
+  "repository": {
+    "type": "git"
+  },
+  "scripts": {
+    "gulp": "gulp"
+  },
+  "engines": {
+    "node": "11.14.0",
+    "npm": "6.9.0"
+  },
+  "devDependencies": {
+    "gulp": "4.0.0",
+    "gulp-replace": "1.0.0",
+    "minimist": "1.2.0",
+    "newman": "4.4.1"
+  }
+}
