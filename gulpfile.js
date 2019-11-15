@@ -12,7 +12,7 @@ var knownOptions = {
         'proto'
     ],
     default: {
-        project: 'cs-elastic-connector',
+        project: 'test',
         host: 'localhost',
         port: '9090',
         proto: 'https'
