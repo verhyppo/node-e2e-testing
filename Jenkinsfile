@@ -29,7 +29,9 @@ pipeline {
     }
     post {
         always {
+            sh "ls ${params.project}/target/*.xml"
             junit "${params.project}/target/*.xml"
+            cleanWs()
         }
     }
 }
