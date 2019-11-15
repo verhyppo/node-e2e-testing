@@ -29,7 +29,7 @@ pipeline {
     }
     post {
         always {
-            junit "target/${params.project}/target/*.xml"
+            junit "${params.project}/target/*.xml"
         }
     }
 }
