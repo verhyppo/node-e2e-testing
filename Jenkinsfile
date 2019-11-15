@@ -4,6 +4,9 @@ pipeline {
             image 'node:11-alpine'
         }
     }
+    environment {
+        HOME = '.'
+    }
     parameters {
         string(name: 'project', description:'name of the project to test')
         string(name: 'host', description:'host where the project is deployed')
