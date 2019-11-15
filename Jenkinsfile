@@ -18,7 +18,7 @@ pipeline {
             steps {
                 sh 'npm install'
                 //sh "npm run gulp replaceProperties -- -proto ${params.protocol} -host ${params.host} -port ${params.port} -project ${params.project}"
-                sh "npm run gulp replaceProperties
+                sh "npm run gulp replaceProperties"
             }
         }
         stage('Run tests') {
