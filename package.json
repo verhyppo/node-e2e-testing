@@ -6,16 +6,12 @@
     "type": "git"
   },
   "scripts": {
-    "gulp": "gulp"
-  },
-  "engines": {
-    "node": "11.14.0",
-    "npm": "6.9.0"
+    "start": "gulp"
   },
   "devDependencies": {
-    "gulp": "4.0.0",
+    "gulp": "4.0.2",
     "gulp-replace": "1.0.0",
-    "minimist": "1.2.0",
-    "newman": "4.4.1"
+    "minimist": "1.2.5",
+    "newman": "5.1.0"
   }
 }
