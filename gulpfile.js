@@ -6,15 +6,15 @@ const replace = require("gulp-replace");
 const fs = require("fs");
 
 const knownOptions = {
-  string: ["project", "baseUrl"],
+  string: ["baseUrl", "iterations"],
   default: {
-    project: "sample",
     baseUrl: "https://run.mocky.io",
+    iterations: 1
   },
 };
 
 const options = minimist(process.argv.slice(2), knownOptions);
-const projectFolder = "./projects/" + options.project;
+const projectFolder = "./project/";
 const outputFolder = projectFolder + "/target"
 
 if (!fs.existsSync(outputFolder)){
@@ -34,7 +34,7 @@ function runNewman(cb) {
     {
       collection: require(projectFolder + "/postman_collection.json"),
       environment: require(outputFolder + "/postman_environment.json"),
-      iterationCount: 1,
+      iterationCount: options.iterations,
       ignoreRedirects: false,
       reporters: ["cli", "json", "junit"],
       reporter: {
