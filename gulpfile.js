@@ -1,68 +1,60 @@
-var gulp = require('gulp');
-var newman = require('newman');
-var minimist = require('minimist');
-var replace = require('gulp-replace');
-var fs = require('fs');
+const { series, src, dest } = require('gulp');
 
-var knownOptions = {
-    string: [
-        'project',
-        'host',
-        'port',
-        'proto'
-    ],
-    default: {
-        project: 'test',
-        host: 'localhost',
-        port: '9090',
-        proto: 'https'
-    }
+const newman = require("newman");
+const minimist = require("minimist");
+const replace = require("gulp-replace");
+const fs = require("fs");
+
+const knownOptions = {
+  string: ["project", "baseUrl"],
+  default: {
+    project: "sample",
+    baseUrl: "https://run.mocky.io",
+  },
 };
 
-var options = minimist(process.argv.slice(2), knownOptions);
+const options = minimist(process.argv.slice(2), knownOptions);
+const projectFolder = "./projects/" + options.project;
+const outputFolder = projectFolder + "/target"
 
-gulp.task('replaceProperties', function () {
-    console.log("Options passed: ", options);
-
-    return gulp.src(['projects/' + options.project + '/postman_environment.json'])
-        .pipe(replace('{{host}}', options.host))
-        .pipe(replace('{{port}}', options.port))
-        .pipe(replace('{{proto}}', options.proto))
-        .pipe(gulp.dest('projects/' + options.project + '/target'));
-});
-
-gulp.task('default', function (cb) {
-    newman.run({
-        collection: require('./projects/' +options.project + '/postman_collection.json'),
-        environment: require('./projects/' + options.project + '/target/postman_environment.json'),
-        iterationCount: 1,
-        ignoreRedirects: false,
-        reporters: ['cli', 'json', 'junit'],
-        reporter: {
-            'junit': {'export': './projects/' + options.project + '/target/junit-report-' + new Date().getTime() + '.xml'},
-            'json': {'export': './projects/' + options.project + '/target/json-report-' + new Date().getTime() + '.json'}
-        },
-        color: true,
-        disableUnicode: true
-    }, process.exit);
-    cb();
-});
-
-var deleteFolderRecursive = function(path) {
-    if (fs.existsSync(path)) {
-        fs.readdirSync(path).forEach(function(file, index){
-            var curPath = path + "/" + file;
-            if (fs.lstatSync(curPath).isDirectory()) { // recurse
-                deleteFolderRecursive(curPath);
-            } else { // delete file
-                fs.unlinkSync(curPath);
-            }
-        });
-    fs.rmdirSync(path);
-    }
+if (!fs.existsSync(outputFolder)){
+    fs.mkdirSync(outputFolder);
 }
 
-gulp.task('clean', function (cb) {
-    console.log("Awww! I'm not implemented!");
-});
+function replaceProperties(cb) {
+  console.log("Options passed: ", options);
 
+  return src([projectFolder + "/postman_environment.json"])
+    .pipe(replace("{{baseUrl}}", options.baseUrl))
+    .pipe(dest(outputFolder));
+}
+
+function runNewman(cb) {
+  newman.run(
+    {
+      collection: require(projectFolder + "/postman_collection.json"),
+      environment: require(outputFolder + "/postman_environment.json"),
+      iterationCount: 1,
+      ignoreRedirects: false,
+      reporters: ["cli", "json", "junit"],
+      reporter: {
+        junit: {
+          export:
+          outputFolder + "/junit-report-" + new Date().getTime() + ".xml",
+        },
+        json: {
+          export:
+          outputFolder + "/json-report-" + new Date().getTime() + ".json",
+        },
+      },
+      color: true,
+      disableUnicode: true,
+    },
+    process.exit
+  );
+  cb();
+}
+
+exports.replaceProperties = replaceProperties;
+exports.runNewman = runNewman;
+exports.default = series(replaceProperties, runNewman)
