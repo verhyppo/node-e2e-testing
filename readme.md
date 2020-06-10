@@ -1,7 +1,7 @@
 # node e2e testing
 
 
-node-e2e-testing is a wrapper on top of newman to run replace properties in your environment json template and execute (Postman)[https://postman.com] collections against multiple environments.
+node-e2e-testing is a wrapper on top of newman to run replace properties in your environment json template and execute [Postman](https://postman.com) collections against multiple environments.
 
 
 ## Installation

@@ -7,6 +7,20 @@
 	"item": [
 		{
 			"name": "Mocky Json request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "05457df5-c06b-4947-bca0-59df57b61b7c",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [],

@@ -1,4 +1,4 @@
 *
 !package*.json
 !gulpfile.js
-!projects/
+!project/
