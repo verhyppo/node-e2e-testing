@@ -6,6 +6,5 @@ WORKDIR /opt/e2e-testing
 COPY gulpfile.js /opt/e2e-testing/
 COPY project /opt/e2e-testing/project
 COPY package*.json /opt/e2e-testing/
-RUN npm i
+RUN npm ci
 CMD ["npm", "run", "start"]
-
