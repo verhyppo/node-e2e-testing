@@ -1,17 +1,10 @@
 import fs, { stat, createReadStream, createWriteStream, mkdir } from 'fs';
 import stringReplaceStream from 'string-replace-stream';
-import minimist from 'minimist'
 import newman from 'newman';
+import dotenv from 'dotenv'
 
-const knownOptions = {
-    string: ["baseUrl", "iterations"],
-    default: {
-        baseUrl: "https://run.mocky.io",
-        iterations: 1
-    },
-};
+dotenv.config();
 
-const options = minimist(process.argv.slice(2), knownOptions);
 const projectFolder = "./project";
 const outputFolder = projectFolder + "/target"
 
@@ -28,16 +21,22 @@ const prepareEnvironment = () => {
 const executepipe = () => {
     const src = createReadStream(`${projectFolder}/postman_environment.json`);
     const dest = createWriteStream(`${outputFolder}/postman_environment.json`)
-    return src.
-        pipe(stringReplaceStream("{{baseUrl}}", options.baseUrl))
-        .pipe(dest);
+
+    let acc = src;
+    Object.entries(process.env)
+        .filter(([k, v]) => k.startsWith(process.env.APP_REPLACE_PREFIX))
+        //.forEach(([k, v]) => console.log(`{{${k.substring("environment_".length, k.length)}}}`))
+        .map(([k, v]) => stringReplaceStream(`{{${k.substring(process.env.APP_REPLACE_PREFIX.length, k.length)}}}`, v))
+        .forEach((it) => acc = acc.pipe(it));
+
+    acc.pipe(dest);
 }
 const runNewman = () => {
     newman.run(
         {
             collection: `${projectFolder}/postman_collection.json`,
             environment: `${outputFolder}/postman_environment.json`,
-            iterationCount: options.iterations,
+            iterationCount: process.env.APP_POSTMAN_ITERATIONS,
             ignoreRedirects: false,
             reporters: ["cli", "json", "junit"],
             reporter: {

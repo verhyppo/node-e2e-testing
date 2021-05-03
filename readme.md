@@ -6,10 +6,10 @@ node-e2e-testing is a wrapper on top of newman to run replace properties in your
 
 ## Installation
 
-The package is not provided in any public repository
+The NPM package is not provided in any public repository
 
 ## Usage
-
+### Node
 To simply run the test provided with the application, run the following command:
 
 ```bash
@@ -17,48 +17,52 @@ npm i
 npm run start
 ```
 
-An example is provided inside the `projects` folder, simply replace the content of the postman collections and environment.
+An example is provided under the `projects` folder.
+To run the project with your postman collection and environment simply replace the contents.
 
-## Properties
+### Docker
 
-|Property   | Default Value   | Description|
-|---|---| --- |
-|`baseUrl`| `https://run.mocky.io`| base url to set in the postman environment|
-|`iterations`|1|number of times the Postman collection needs to be executed|
-
-The docker image provided, allows you to run the application from a docker container:
+Docker image built by the project, allows you to run the application from a docker container:
 
 ```
 docker run docker run node-e2e-testing:latest
 ```
 
-to run the application using your postman collection and environment 
+To override application configutation, just mount a `.env` file under `/opt/e2e-testing`
 
 ```
 docker \
-  -v $/path/to/my/collection/:/opt/e2e-testing/projects/ \
+  -v /path/to/my/.env:/opt/e2e-testing/.env
   run node-e2e-testing:latest
-```
-
-at the end of the execution, the generated postman environment and the test results in json and junit report format, can be found in the `target`
-
-```
-projects
-|-- postman_collection.json
-|-- postman_environment.json
-`-- target
-    |-- json-report-1591739475411.json
-    |-- junit-report-1591739475411.xml
-    `-- postman_environment.json
 ```
 
 In order to override default values, you can override the command:
 ```
 docker \
-  -v $/path/to/my/collection/:/opt/e2e-testing/projects/ \
-  run node-e2e-testing:latest \
-  npm run start -- --baseUrl asdf.com
+  -v /path/to/my/.env:/opt/e2e-testing/.env
+  -v $/path/to/my/collection/:/opt/e2e-testing/project/ \
+  run node-e2e-testing:latest
 ```
+
+## Placeholder removal
+
+You can replace as many variable as you prefer via the `.env` file.
+
+example file
+```
+APP_REPLACE_PREFIX=APP_ENVIRONMENT_
+APP_NEWMAN_ITERATIONS=1
+APP_ENVIRONMENT_baseUrl=https://run.mocky.io
+```
+
+| Property                | Default Value      | Description                                                         |
+| ----------------------- | ------------------ | ------------------------------------------------------------------- |
+| `APP_REPLACE_PREFIX`    | `APP_ENVIRONMENT_` | common prefix for replacement variables in your postman environment |
+| `APP_POSTMAN_ITERATIONS` | 1                  | number of times the Postman collection needs to be executed         |
+
+In the example above, `APP_ENVIRONMENT_baseUrl` is the one that will be substituted to the `projects/postman_environment.json` when found in the forman `{{baseUrl}}`
+
+at the end of the execution, the generated postman environment and the test results in json and junit report format, can be found in the `target`
 
 ## Build
 
@@ -68,20 +72,10 @@ The following program can be built and used as docker image by issuing the follo
 docker build -t node-e2e-testing .
 ```
 
-from this, you can simply run following the instructions above or can be used as base to create another docker image that contains the tests of your choose:
-
-```
-FROM node-e2e-testing
-
-COPY my-project /opt/e2e-testing/project
-CMD ["npm", "run", "start", "--", "--baseUrl=https://test.com"]
-```
-
-
 ## Roadmap
 
-* allow pass parameters as environment variables
-* use a better cli tool
+* ~~allow pass parameters as environment variables~~
+* ~~use a better cli tool~~
 
 ## Contributing
 
